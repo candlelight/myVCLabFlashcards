@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VC Glossary Flashcards — Renata Phillippi</title>
+<style>
+  :root {
+    --bg: #0f1115;
+    --panel: #171a21;
+    --card-front: #1b1e27;
+    --card-back: #20242f;
+    --text: #eceef2;
+    --muted: #9aa0ac;
+    --accent: #8b7cf6;
+    --accent2: #34d1a3;
+    --amber: #f5b942;
+    --border: #2a2e3a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    min-height: 100vh;
+  }
+  .wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+  header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 1.4rem;
+    margin: 0 0 4px;
+    color: #fff;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin: 0;
+  }
+  .controls-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 18px 0 6px;
+  }
+  select {
+    background: var(--panel);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.85rem;
+    font-family: inherit;
+  }
+  .stat-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 14px 2px 8px;
+  }
+  .progress-track {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 0 2px 18px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    width: 0%;
+    transition: width 0.25s ease;
+  }
+  .scene {
+    perspective: 1600px;
+    margin-bottom: 22px;
+  }
+  .card {
+    position: relative;
+    width: 100%;
+    min-height: 420px;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(.4,.2,.2,1);
+    cursor: pointer;
+  }
+  .card.flipped { transform: rotateY(180deg); }
+  .face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 18px;
+    border: 1px solid var(--border);
+    padding: 30px 28px;
+    display: flex;
+    flex-direction: column;
+  }
+  .face-front {
+    background: var(--card-front);
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .face-back {
+    background: var(--card-back);
+    transform: rotateY(180deg);
+    overflow-y: auto;
+    justify-content: flex-start;
+    padding-bottom: 34px;
+  }
+  .section-tag {
+    display: inline-block;
+    font-size: 0.68rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent2);
+    background: rgba(52,209,163,0.12);
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-bottom: 18px;
+  }
+  .term-text {
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.3;
+  }
+  .source-text {
+    margin-top: 14px;
+    color: var(--muted);
+    font-size: 0.78rem;
+  }
+  .flip-hint {
+    position: absolute;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    letter-spacing: 0.03em;
+  }
+  .back-term {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .def-block { margin-bottom: 14px; }
+  .def-label {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .def-block:nth-of-type(2) .def-label { color: var(--amber); }
+  .def-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    color: var(--text);
+  }
+  .nav-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+  }
+  button {
+    font-family: inherit;
+    border: 1px solid var(--border);
+    background: var(--panel);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  button:hover { background: #21252f; }
+  button:active { transform: scale(0.97); }
+  button:disabled { opacity: 0.35; cursor: default; }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+    font-weight: 600;
+    flex: 1;
+    max-width: 200px;
+  }
+  .btn-primary:hover { background: #7a6be0; }
+  .secondary-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .secondary-row button { font-size: 0.78rem; padding: 8px 14px; }
+  .assess-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+    justify-content: center;
+  }
+  .btn-know {
+    background: rgba(52,209,163,0.14);
+    border-color: rgba(52,209,163,0.4);
+    color: var(--accent2);
+  }
+  .btn-review {
+    background: rgba(245,185,66,0.12);
+    border-color: rgba(245,185,66,0.4);
+    color: var(--amber);
+  }
+  .done-panel {
+    text-align: center;
+    padding: 50px 20px;
+    background: var(--panel);
+    border-radius: 18px;
+    border: 1px solid var(--border);
+  }
+  .done-panel h2 { color: #fff; margin-top: 0; }
+  .kbd-hint {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.72rem;
+    margin-top: 22px;
+  }
+  kbd {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.7rem;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>VC Glossary Flashcards</h1>
+    <p class="subtitle">Renata Phillippi · Venture Institute Cohort VII</p>
+  </header>
+
+  <div class="controls-row">
+    <select id="sectionFilter"></select>
+    <button id="shuffleBtn">🔀 Shuffle</button>
+    <button id="resetBtn">↺ Reset deck</button>
+  </div>
+
+  <div class="stat-bar">
+    <span id="counter">1 / 78</span>
+    <span id="knowCount">Know it: 0 &nbsp;·&nbsp; Review: 0</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div id="deckArea">
+    <div class="scene">
+      <div class="card" id="card">
+        <div class="face face-front">
+          <div>
+            <span class="section-tag" id="frontSection"></span>
+            <div class="term-text" id="frontTerm"></div>
+            <div class="source-text" id="frontSource"></div>
+          </div>
+          <div class="flip-hint">tap card or press space to flip</div>
+        </div>
+        <div class="face face-back">
+          <div class="back-term" id="backTerm"></div>
+          <div id="backContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav-row">
+      <button id="prevBtn">← Prev</button>
+      <button id="flipBtn" class="btn-primary">Flip card</button>
+      <button id="nextBtn">Next →</button>
+    </div>
+
+    <div class="assess-row">
+      <button id="reviewBtn" class="btn-review">Still learning</button>
+      <button id="knowBtn" class="btn-know">Got it ✓</button>
+    </div>
+
+    <div class="secondary-row">
+      <button id="reviewOnlyBtn">Study "still learning" only</button>
+      <button id="allBtn">Study full deck</button>
+    </div>
+  </div>
+
+  <div id="donePanel" class="done-panel" style="display:none;">
+    <h2>Deck complete 🎉</h2>
+    <p id="doneSummary" style="color:var(--muted);"></p>
+    <button class="btn-primary" id="restartBtn">Study again</button>
+  </div>
+
+  <p class="kbd-hint">
+    <kbd>←</kbd> <kbd>→</kbd> navigate &nbsp;·&nbsp; <kbd>space</kbd> flip &nbsp;·&nbsp;
+    <kbd>1</kbd> still learning &nbsp;·&nbsp; <kbd>2</kbd> got it
+  </p>
+</div>
+
+<script>
+const DATA = [{"term": "Venture Capital (VC)", "source": "1.1", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "a type of private equity financing offered by firms or funds to startups and early-stage companies with high growth potential."}, {"label": "In plain English", "text": "Professional investors' money, handed to risky young companies in exchange for a slice of ownership, with no repayment schedule and no guarantee. The bet is that a few will become huge and cover the losses on the rest."}]}, {"term": "Startup Ecosystem", "source": "1.1, 1.2", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "the interconnected community of entrepreneurs, venture capitalists, and other resources such as incubators, accelerators, and service providers that foster startup growth."}, {"label": "In plain English", "text": "the whole system around a startup, it includes everyone from investors to mentors to accelerators, that makes it easier for new companies to get off the ground."}]}, {"term": "Equity", "source": "1.1", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "ownership interest in a company, often in the form of shares of stock."}, {"label": "In plain English", "text": "the amount of ownership you have in a company, usually in the form of stocks"}]}, {"term": "Private Equity", "source": "1.1, 2.1", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "capital investment made into companies that are not publicly traded."}, {"label": "In plain English", "text": "money invested into private companies; VC is technically a subset of this broader category, just focused on early stage companies rather than corporations who have been in the market for years, sometimes decades."}]}, {"term": "Lifestyle Business", "source": "1.1", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "a business that provides its owner with a steady income but lacks the potential for exponential growth."}, {"label": "In plain English", "text": "a solid, profitable business that VCs generally won't touch, because it can never grow big enough to deliver the outsized returns their model needs."}]}, {"term": "Unicorn", "source": "1.2", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "any tech startup that reaches a $1 billion market value as determined by private or public investment."}, {"label": "In plain English", "text": "the rare startup that hits the jackpot, the one every fund is quietly hoping is somewhere in its portfolio."}]}, {"term": "Disruptive Innovation", "source": "1.2", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "a process by which a smaller company with fewer resources successfully challenges established incumbents by introducing new, transformative technologies or business models."}, {"label": "In plain English", "text": "the scrappy newcomer that rewrites the rules of an industry instead of just competing within them."}]}, {"term": "Return on Investment (ROI)", "source": "1.2", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "a ratio comparing the gain or loss from an investment relative to its cost."}, {"label": "In plain English", "text": "did you make money, and how much, compared to what you put in."}]}, {"term": "Funding Rounds", "source": "1.2", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "stages of securing investment during a startup's lifecycle (seed, Series A, B, C, etc.), each offering different amounts of capital for different levels of growth."}, {"label": "In plain English", "text": "the \"levels\" a startup progresses through as it raises bigger checks from different types of investors over time."}]}, {"term": "Institutional Investors", "source": "1.1", "section": "VC Fundamentals", "parts": [{"label": "VC Lab", "text": "organizations that invest on behalf of their members, such as pension funds and insurance companies."}, {"label": "In plain English", "text": "big, professional pools of other people's money (retirees, policyholders) that get funneled into VC funds as one of many asset classes."}]}, {"term": "Limited Partners (LPs)", "source": "1.1, 2.1, 2.2", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "investors in a venture capital fund, often institutional investors like pension funds, endowments, or wealthy individuals, who have limited liability and no day-to-day management role."}, {"label": "In plain English", "text": "the people whose money the fund is actually investing. Without LPs, there is no fund."}]}, {"term": "General Partner (GP)", "source": "1.1, 2.2", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "the primary decision-maker in a VC firm, identifying opportunities, negotiating terms, and working with portfolio companies."}, {"label": "In plain English", "text": "the person (or entity) actually picking the deals and running the fund day to day."}]}, {"term": "Managing Partner", "source": "1.1", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "typically a senior owner of the firm who oversees investment strategy, overall management, and LP relationships."}, {"label": "In plain English", "text": "the person ultimately accountable for the whole firm, not just one fund."}]}, {"term": "Venture Partner", "source": "1.1, 2.2, 2.3", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "often an industry veteran or specialist brought in for expertise on certain investments or sectors, without being involved in every investment decision."}, {"label": "In plain English", "text": "a part-time or specialist member of the team, useful for their network or domain knowledge, but with a lighter commitment (and smaller carry share) than a full partner."}]}, {"term": "Associates / Analysts / Interns", "source": "1.1", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "the junior tiers of a VC firm, supporting sourcing, due diligence, research, and portfolio support."}, {"label": "In plain English", "text": "the entry points into VC, though as of 2026 these roles are shrinking fast as AI absorbs a lot of the research and admin work they used to do."}]}, {"term": "Principals", "source": "2.3", "section": "People and Roles in a VC Firm", "parts": [{"label": "VC Lab", "text": "senior professionals in a venture capital firm typically involved in making investment decisions."}, {"label": "In plain English", "text": "sits above associate/analyst level, below full partner, someone trusted to help drive deals."}]}, {"term": "Emerging Manager", "source": "VI-Call", "section": "People and Roles in a VC Firm", "parts": [{"label": "Definition", "text": "a first-time or early-stage fund manager, typically on their first or second fund, without an established track record."}, {"label": "Why it matters", "text": "LPs are historically wary of emerging managers because of past horror stories (poor compliance, sanctioned individuals slipping through, banks shutting down accounts), so newer managers now have to work harder to prove institutional-grade operations from day one."}]}, {"term": "Solo GP", "source": "VI-Call", "section": "People and Roles in a VC Firm", "parts": [{"label": "Definition", "text": "a fund run by a single general partner without a broader partner team."}, {"label": "Why it matters", "text": "this used to be nearly impossible to sustain (too much admin, too little time), but cheaper fund infrastructure and AI tooling have made running a fund solo far more viable, which is part of why the number of small, specialist funds is exploding.Also, Decile Group has created a"}]}, {"term": "Traditional Fund", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "a firm that collects funds from limited partners and invests across multiple startups, planning for a profitable exit."}, {"label": "In plain English", "text": "the classic VC setup most people picture, diversified, multi-company, patient capital."}]}, {"term": "Venture Builder", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "also known as a \"startup studio\" or \"startup factory,\" a firm that creates and manages companies and funds internally rather than investing in outside startups."}, {"label": "In plain English", "text": "instead of backing someone else's idea, the firm builds the company itself, in-house, then funds it."}]}, {"term": "Outsourced Fund", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "a platform (like AngelList) that lets part-time or amateur investors establish venture funds while simplifying the investment process and administrative work."}, {"label": "In plain English", "text": "training wheels for a first-time fund manager, someone else handles the back office."}]}, {"term": "Special Purpose Vehicle (SPV)", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "a simplified fund that pools investments for a single, specific deal, with lower fees and carry than a traditional fund."}, {"label": "In plain English", "text": "a one-off wrapper for a single investment, cheap and fast to set up, but (per this week's call) it does not build a track record the way a real fund does, because you're really just relaying one deal, not proving you can pick many."}]}, {"term": "Specialty Fund", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "alternative investment vehicles that deviate from the traditional VC model, often branded as venture funds but structurally closer to private equity or debt funds. Examples include Revenue-Based Funds (capital in exchange for a cut of ongoing revenue), Search Funds (capital raised to fund a search for a company to acquire and run), Receivable Funds (capital advanced against a company's accounts receivable), and Secondary Funds (which buy existing stakes from early investors looking to exit)."}]}, {"term": "Endowments", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "funds donated to institutions or foundations, where the principal remains intact and only the income or interest earned is used."}, {"label": "In plain English", "text": "a common type of large, patient LP, think university or foundation money."}]}, {"term": "Family Offices", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "private wealth management advisory firms that serve ultra-high-net-worth investors."}, {"label": "In plain English", "text": "the in-house investment team for one very wealthy family, often a key LP archetype for smaller funds."}]}, {"term": "High Net Worth Individuals", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "people with significant financial wealth and investible assets beyond their primary residence."}, {"label": "In plain English", "text": "wealthy individuals investing their own money, as opposed to institutional money."}]}, {"term": "Venture-Backed Companies", "source": "2.1", "section": "Fund Structures", "parts": [{"label": "VC Lab", "text": "companies that have received funding from venture capital firms, typically high-growth startups."}, {"label": "In plain English", "text": "the portfolio, the actual businesses the fund's money went into."}]}, {"term": "The Fund", "source": "2.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "the financial engine that collects and invests LP capital, holds securities on their behalf, and calls capital as needed."}, {"label": "In plain English", "text": "the actual pot of investable money."}]}, {"term": "The Management Company (ManCo)", "source": "2.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "the brand owner, managing IP and vendor relationships, employing staff, and funded by management fees."}, {"label": "In plain English", "text": "the operating business behind the fund, the entity that pays salaries and rent."}]}, {"term": "The General Partner (entity)", "source": "2.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "the entity that makes investment decisions, oversees the fund(s), and distributes carried interest."}, {"label": "In plain English", "text": "distinct from \"a GP\" the person, this is the legal entity that actually makes the calls and takes the carry."}]}, {"term": "Pass-Through Entity", "source": "2.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "a legal structure where the entity itself doesn't pay income tax; income, deductions, and credits pass through to the owners, who report them on personal returns."}, {"label": "In plain English", "text": "it avoids the double taxation that a normal corporation faces, profits get taxed once, at the investor level, not twice."}]}, {"term": "Pro Rata", "source": "2.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "the proportional allocation of something, such as ownership or investment, based on existing stake."}, {"label": "In plain English", "text": "your fair share, scaled to what you already own; a GP's 1% pro rata commitment to their own fund is a common example."}]}, {"term": "Limited Partnership Agreement (LPA)", "source": "2.3, 3.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "the legal document establishing the relationship between the General Partner (who invests) and the Limited Partners (who provide capital), outlining how capital is called, invested, returned, and how fund expenses are allocated."}, {"label": "In plain English", "text": "the master contract of the fund; almost every economic term (fees, carry, waterfalls) traces back to this document."}]}, {"term": "Side Letter", "source": "3.2", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "a separate agreement that amends or supplements the LPA for a particular investor, often granting preferential terms like reduced fees based on size or strategic importance."}, {"label": "In plain English", "text": "the VIP side deal a big LP negotiates on top of the standard fund terms."}]}, {"term": "Term Sheet", "source": "1.1", "section": "Fund Entities and Legal Structure", "parts": [{"label": "VC Lab", "text": "a non-binding agreement setting the basic terms and conditions of an investment."}, {"label": "In plain English", "text": "the \"here's roughly what we're proposing\" document before lawyers turn it into a binding contract."}]}, {"term": "Thesis", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "a set of guidelines that direct the investment strategy of a venture fund, typically defining geography, sector focus, stage, target fund size, and the fund's \"secret sauce.\""}, {"label": "In plain English", "text": "the fund's north star, what it invests in and why, and the thing LPs are actually betting on when they commit capital."}]}, {"term": "PACT", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "a commitment letter from a potential investor expressing intent to invest in the fund."}, {"label": "In plain English", "text": "a soft \"yes\" from an LP before money actually moves."}]}, {"term": "Hard Circled", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "committed capital from investors that is considered secure, though not yet legally binding."}, {"label": "In plain English", "text": "money that's very likely coming, one step more solid than a PACT, but still short of a signed, funded commitment."}]}, {"term": "Domicile", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the legal home of the fund, often chosen for regulatory or tax reasons (Delaware is the most common and cheapest in the US)."}, {"label": "In plain English", "text": "where the fund is legally \"based,\" which drives cost, speed, and complexity of setup."}]}, {"term": "Due Diligence", "source": "1.1, 2.2, 2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the process of investigating or auditing a potential investment to confirm facts, such as reviewing financial records, business model, market, and team."}, {"label": "In plain English", "text": "doing your homework on a company before wiring any money."}]}, {"term": "SAFE Note", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "a Simple Agreement for Future Equity, a financial instrument that lets investors put money into a startup with the promise of equity at a later date (usually the next priced round)."}, {"label": "In plain English", "text": "a fast, lawyer-light way to invest early without haggling over a company's exact valuation on day one."}]}, {"term": "Angel Fund", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "a type of investment fund focused on providing early-stage capital to new startups."}, {"label": "In plain English", "text": "a fund investing at the very earliest, highest-risk stage, before there's much more than an idea and a team."}]}, {"term": "Exit", "source": "1.1, 2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the process by which an investor sells their stake in a company, typically through an acquisition or Initial Public Offering (IPO)."}, {"label": "In plain English", "text": "cashing out, the moment paper gains become real money."}]}, {"term": "Initial Public Offering (IPO)", "source": "1.1, 2.1", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the process by which a private company becomes publicly traded on a stock exchange."}, {"label": "In plain English", "text": "the company starts selling shares to the general public, one of the two classic ways a VC fund exits an investment."}]}, {"term": "Board Seat", "source": "1.1", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "a position on a company's board of directors, which a VC often takes after investing to influence and monitor strategy and decisions."}, {"label": "In plain English", "text": "the VC's formal seat at the table for major company decisions going forward."}]}, {"term": "Portfolio Companies", "source": "1.1, 2.2", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the companies a venture capital fund has invested in."}, {"label": "In plain English", "text": "the fund's bets, collectively."}]}, {"term": "Top Decile Returns", "source": "2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the top 10% of performance when returns are distributed into segments (deciles)."}, {"label": "In plain English", "text": "the elite tier of fund performance that LPs are actually trying to access, the whole industry is essentially a hunt for it."}]}, {"term": "Sourcing", "source": "1.1, 2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the process by which venture capitalists find potential investment opportunities, through networks, events, or inbound requests."}, {"label": "In plain English", "text": "how deals land on a VC's desk in the first place."}]}, {"term": "Fundraising", "source": "1.1, 2.3", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "the process of gathering voluntary financial contributions, in this context from LPs."}, {"label": "In plain English", "text": "convincing investors to commit money to the fund, distinct from a startup fundraising from VCs."}]}, {"term": "Investment Deployment / Value Creation / Profit Distribution", "source": "1.1", "section": "Fund Formation and Investment Process", "parts": [{"label": "VC Lab", "text": "deployment is using invested capital for its intended purpose; value creation is the process by which a company increases the value of its products, services, or business; profit distribution is dividing profits among stakeholders according to their invested share."}, {"label": "In plain English", "text": "the three-part cycle every fund runs on: put the money to work, help the company grow, then split what comes back."}]}, {"term": "2/20 Model", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "the standard VC compensation structure: a 2% annual management fee plus 20% carried interest on profits."}, {"label": "In plain English", "text": "the industry's default pay structure, though as this week's call pointed out, \"2 and 20\" is a bit of marketing shorthand: 2% a year for a 10-year fund is actually 20% of committed capital going toward fees over the fund's life, not 2%."}]}, {"term": "Management Fee", "source": "1.1, 2.2, 3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "an annual fee, typically around 2% of committed capital, charged by the Management Company to cover operating costs (salaries, rent, diligence costs, travel)."}, {"label": "In plain English", "text": "the fund's operating budget, paid regardless of performance."}]}, {"term": "Carried Interest (\"Carry\")", "source": "1.1, 2.1, 2.2, 2.3, 3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "the share of a fund's profits, typically around 20%, paid to the General Partner as compensation for managing the investments."}, {"label": "In plain English", "text": "the GP's real payday, they only see meaningful money here if the fund actually performs."}]}, {"term": "American Waterfall (Deal-by-Deal)", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "fund managers receive carried interest on a deal-by-deal basis, as soon as an individual investment returns capital and any preferred return."}, {"label": "In plain English", "text": "the GP can get paid on an early winner immediately, even if other deals in the fund haven't returned anything yet."}]}, {"term": "European Waterfall (Whole Fund)", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "all capital contributions (and often a preferred return) must be returned to investors across the entire fund before the GP starts receiving carried interest."}, {"label": "In plain English", "text": "the GP has to wait until the whole fund is in the black, a structure generally seen as more LP-friendly."}]}, {"term": "Preferred Return", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "a minimum return threshold; carried interest applies only to returns above this rate, ensuring investors get a baseline return before managers earn their share."}, {"label": "In plain English", "text": "LPs get paid first, up to an agreed minimum, before the GP's carry kicks in."}]}, {"term": "Clawback Provision", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "a provision requiring managers to return previously earned carried interest if early investments perform well but later ones do not."}, {"label": "In plain English", "text": "a safeguard so the GP doesn't walk away overpaid if the fund's early promise doesn't hold up."}]}, {"term": "Catch-Up Provision", "source": "3.2", "section": "Fund Economics and Compensation", "parts": [{"label": "VC Lab", "text": "once the preferred return is met, managers may receive a larger share of profits until they \"catch up\" to a predetermined percentage of total profits."}, {"label": "In plain English", "text": "after LPs get their preferred return, the GP gets a burst of profit share to close the gap back to the agreed split."}]}, {"term": "Assets Under Management (AUM)", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "the total market value of the capital a fund or firm manages across all its funds."}, {"label": "Why it matters", "text": "the whole 2/20 model only works at scale, a $1.5M fund spends over half its capital on fees and expenses before a dollar reaches a startup, while a $10M+ fund makes the math sane. AUM is why firms are built to raise fund after fund, not just one."}]}, {"term": "Organizational Expenses vs. Annual Expenses", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "organizational expenses are one-time setup costs (legal, entity formation) paid once by the fund; annual expenses are recurring yearly costs (accounting, compliance, audit)."}, {"label": "Why it matters", "text": "both are typically paid out of LP capital, not the GP's pocket, which is exactly why under-raising a fund is so damaging: fixed costs don't shrink just because the fund is small."}]}, {"term": "Fund Administration", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "despite the imposing name, this mostly just means accounting for the fund."}, {"label": "Why it matters", "text": "it's one of the most commonly misunderstood terms in the industry; new managers often assume it covers legal, compliance, and strategy too, when in practice most fund admin providers narrowly do the books and nothing else, which is part of why funds still need separate legal and compliance help."}]}, {"term": "Successor Fund Threshold", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "the requirement that a fund deploy a set percentage of its capital before the manager can begin raising the next fund."}, {"label": "Why it matters", "text": "it exists so a GP can't collect a full fund's worth of LP money and immediately go raise more before proving anything, it's a built-in pacing mechanism for building a firm fund by fund."}]}, {"term": "Fund of Funds", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "a fund that invests in other venture funds rather than directly in startups."}, {"label": "Why it matters", "text": "mentioned as part of the broader Decile ecosystem; it's a way for an LP to get diversified VC exposure without vetting dozens of individual managers themselves."}]}, {"term": "General Solicitation", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "publicly marketing or advertising a fund to raise capital, which is heavily restricted or requires special licensing in many jurisdictions (notably across Europe)."}, {"label": "Why it matters", "text": "it's a real legal tripwire, casually promoting a fund on social media or at a public event can cross into \"general solicitation\" and create serious regulatory exposure, which is why fundraising conversations tend to happen through warm, private introductions instead."}]}, {"term": "Track Record", "source": "VI-Call", "section": "Fund Economics and Compensation", "parts": [{"label": "Definition", "text": "a manager's documented history of investment decisions and outcomes as a fund, used by LPs to judge future performance."}, {"label": "Why it matters", "text": "this week's call made a sharper point than usual: running SPVs or syndicates does not build a real track record, because in an SPV the LP is really evaluating one company (and implicitly trusting the sponsor's pick), not the manager's overall judgment across a blind pool of investments the way a fund requires."}]}, {"term": "Internal Rate of Return (IRR)", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "the annualized rate showing an investment's growth over time, accounting for the time value of money; a relative measure used to compare different investments."}, {"label": "In plain English", "text": "the \"annual growth rate\" of your money, useful for comparing a 5-year win to a 10-year win on equal footing."}]}, {"term": "Total Value to Paid-In (TVPI)", "source": "2.3, 3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "measures the total value of current investments plus distributions, relative to the amount of capital paid into the fund."}, {"label": "In plain English", "text": "for every dollar an LP put in, how much total value (cash back plus current holdings) does it represent now."}]}, {"term": "Distributed to Paid-In (DPI)", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "the amount of capital already returned to investors relative to what they invested."}, {"label": "In plain English", "text": "real, realized cash back in hand, the \"how much have I actually gotten back\" number."}]}, {"term": "Residual Value to Paid-In (RVPI)", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "the value of a fund's remaining, unsold investments relative to capital paid in."}, {"label": "In plain English", "text": "the \"still on paper\" portion of TVPI, what's left in the portfolio that hasn't been cashed out yet."}]}, {"term": "Cash on Cash", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "measures the return on the actual cash invested, disregarding any leverage or borrowed money."}, {"label": "In plain English", "text": "straightforward, no-frills return on real dollars put in."}]}, {"term": "Net Multiple", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "the total value of an investment relative to the capital invested."}, {"label": "In plain English", "text": "\"how many times your money\" language, a 2.0x means it doubled."}]}, {"term": "Exit Multiple", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "the ratio of an investment's exit value to its original cost."}, {"label": "In plain English", "text": "same idea as net multiple, but specifically measured at the moment of exit."}]}, {"term": "Residual Value / Gross Portfolio Value", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "residual value is what's left in a fund after distributions; gross portfolio value is the total current value of everything the fund still holds."}, {"label": "In plain English", "text": "Portfolio value is the total current value of the startups a fund has invested in, based on their most recent valuations. It's a paper number until a company exits and cash is actually returned."}]}, {"term": "Capital Called / Capital Committed / Capital Distributed", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "committed capital is the total an LP has agreed to invest over the fund's life; called capital is the portion actually requested and transferred to date; distributed capital is what's been returned to LPs, including profits."}, {"label": "In plain English", "text": "These three terms describe three checkpoints along an LP's journey in a fund. Capital committed is the total amount an LP has agreed to invest over the fund's life, say $5M. Capital called is the portion the GP has actually requested and received, usually in tranches as deals are made, so that $5M might come in as several separate requests over time. Capital distributed is what gets returned to the LP after a startup exits, including any profits."}]}, {"term": "Realized vs. Unrealized Returns", "source": "3.3", "section": "Performance Metrics", "parts": [{"label": "VC Lab", "text": "realized returns come from investments that have been sold or exited, a concrete number; unrealized returns reflect the potential value of investments still held, based on a valuation that can still change."}, {"label": "In plain English", "text": "money in the bank versus money that only exists on paper until there's an actual exit."}]}, {"term": "Power Law", "source": "3.1", "section": "Power Law and Investment Strategy", "parts": [{"label": "VC Lab", "text": "the principle that one single investment yields returns larger than all other investments combined, often by orders of magnitude."}, {"label": "In plain English", "text": "in a healthy VC portfolio, one massive win (not steady, even performance across the board) is what actually makes the fund's numbers work."}]}, {"term": "Pareto Principle", "source": "3.1", "section": "Power Law and Investment Strategy", "parts": [{"label": "VC Lab", "text": "the 80/20 rule, originally observed by Vilfredo Pareto (80% of Italy's land owned by 20% of the population), which evolved into the broader Power Law concept."}, {"label": "In plain English", "text": "the historical root of \"a small share of things drives most of the outcome,\" applied to VC returns."}]}, {"term": "Blue Ocean Deal", "source": "3.1", "section": "Power Law and Investment Strategy", "parts": [{"label": "VC Lab", "text": "an opportunity in an untapped market where competition is minimal or non-existent, allowing for rapid growth and dominance."}, {"label": "In plain English", "text": "a market with no crowd yet, the kind of space VCs specifically hunt for because it gives a startup room to run before anyone else shows up."}]}];
+
+let deck = [];
+let order = [];
+let idx = 0;
+let flipped = false;
+let status = {}; // term -> 'know' | 'review'
+let mode = 'all'; // 'all' or 'review'
+let activeSection = 'all';
+
+const els = {
+  card: document.getElementById('card'),
+  frontSection: document.getElementById('frontSection'),
+  frontTerm: document.getElementById('frontTerm'),
+  frontSource: document.getElementById('frontSource'),
+  backTerm: document.getElementById('backTerm'),
+  backContent: document.getElementById('backContent'),
+  counter: document.getElementById('counter'),
+  knowCount: document.getElementById('knowCount'),
+  progressFill: document.getElementById('progressFill'),
+  sectionFilter: document.getElementById('sectionFilter'),
+  deckArea: document.getElementById('deckArea'),
+  donePanel: document.getElementById('donePanel'),
+  doneSummary: document.getElementById('doneSummary'),
+};
+
+function shuffle(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function buildSectionOptions() {
+  const sections = [...new Set(DATA.map(d => d.section))];
+  els.sectionFilter.innerHTML = '<option value="all">All sections (' + DATA.length + ' terms)</option>' +
+    sections.map(s => {
+      const count = DATA.filter(d => d.section === s).length;
+      return `<option value="${s}">${s} (${count})</option>`;
+    }).join('');
+}
+
+function getPool() {
+  let pool = activeSection === 'all' ? DATA : DATA.filter(d => d.section === activeSection);
+  if (mode === 'review') pool = pool.filter(d => status[d.term] === 'review');
+  return pool;
+}
+
+function startDeck(shuffled) {
+  deck = getPool();
+  order = shuffled ? shuffle(deck) : deck.slice();
+  idx = 0;
+  flipped = false;
+  if (order.length === 0) {
+    showEmpty();
+    return;
+  }
+  els.deckArea.style.display = '';
+  els.donePanel.style.display = 'none';
+  render();
+}
+
+function showEmpty() {
+  els.deckArea.style.display = 'none';
+  els.donePanel.style.display = '';
+  els.doneSummary.textContent = mode === 'review'
+    ? 'No cards marked "still learning" in this section. Nice work.'
+    : 'No cards in this section.';
+}
+
+function render() {
+  if (idx >= order.length) {
+    els.deckArea.style.display = 'none';
+    els.donePanel.style.display = '';
+    const knowN = order.filter(c => status[c.term] === 'know').length;
+    const reviewN = order.filter(c => status[c.term] === 'review').length;
+    els.doneSummary.textContent = `${knowN} marked "got it", ${reviewN} still need review.`;
+    return;
+  }
+  els.deckArea.style.display = '';
+  els.donePanel.style.display = 'none';
+
+  const item = order[idx];
+  flipped = false;
+  els.card.classList.remove('flipped');
+  els.frontSection.textContent = item.section;
+  els.frontTerm.textContent = item.term;
+  els.frontSource.textContent = 'Source: ' + item.source;
+  els.backTerm.textContent = item.term;
+  els.backContent.innerHTML = item.parts.map(p =>
+    `<div class="def-block"><div class="def-label">${p.label}</div><div class="def-text">${escapeHtml(p.text)}</div></div>`
+  ).join('');
+
+  els.counter.textContent = `${idx + 1} / ${order.length}`;
+  const knowN = Object.values(status).filter(v => v === 'know').length;
+  const reviewN = Object.values(status).filter(v => v === 'review').length;
+  els.knowCount.textContent = `Know it: ${knowN}  ·  Review: ${reviewN}`;
+  els.progressFill.style.width = ((idx) / order.length * 100) + '%';
+
+  document.getElementById('prevBtn').disabled = idx === 0;
+}
+
+function escapeHtml(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function flip() {
+  flipped = !flipped;
+  els.card.classList.toggle('flipped', flipped);
+}
+
+function next() {
+  idx = Math.min(idx + 1, order.length);
+  render();
+}
+function prev() {
+  idx = Math.max(idx - 1, 0);
+  render();
+}
+function mark(state) {
+  const item = order[idx];
+  if (item) status[item.term] = state;
+  next();
+}
+
+els.card.addEventListener('click', flip);
+document.getElementById('flipBtn').addEventListener('click', flip);
+document.getElementById('nextBtn').addEventListener('click', next);
+document.getElementById('prevBtn').addEventListener('click', prev);
+document.getElementById('knowBtn').addEventListener('click', () => mark('know'));
+document.getElementById('reviewBtn').addEventListener('click', () => mark('review'));
+document.getElementById('shuffleBtn').addEventListener('click', () => startDeck(true));
+document.getElementById('resetBtn').addEventListener('click', () => { status = {}; startDeck(false); });
+document.getElementById('restartBtn').addEventListener('click', () => startDeck(false));
+document.getElementById('reviewOnlyBtn').addEventListener('click', () => { mode = 'review'; startDeck(true); });
+document.getElementById('allBtn').addEventListener('click', () => { mode = 'all'; startDeck(false); });
+els.sectionFilter.addEventListener('change', (e) => {
+  activeSection = e.target.value;
+  mode = 'all';
+  startDeck(false);
+});
+
+document.addEventListener('keydown', (e) => {
+  if (els.deckArea.style.display === 'none') return;
+  if (e.code === 'Space') { e.preventDefault(); flip(); }
+  else if (e.code === 'ArrowRight') next();
+  else if (e.code === 'ArrowLeft') prev();
+  else if (e.code === 'Digit1') mark('review');
+  else if (e.code === 'Digit2') mark('know');
+});
+
+buildSectionOptions();
+startDeck(true);
+</script>
+</body>
+</html>
