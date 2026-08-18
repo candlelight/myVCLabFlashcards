@@ -1,4 +1,4 @@
-# myVCLabFlashcards
+# My VCLab Flashcards
 
 Interactive flashcards for the VC Lab / Venture Institute Cohort VII glossary.
 
